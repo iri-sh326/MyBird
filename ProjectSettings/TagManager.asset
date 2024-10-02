@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Point
+  - Pipe
   layers:
   - Default
   - TransparentFX
@@ -38,6 +40,15 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: BackGround
+    uniqueID: 2300676229
+    locked: 0
+  - name: Player
+    uniqueID: 334230581
+    locked: 0
+  - name: Pipe
+    uniqueID: 1934721709
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
