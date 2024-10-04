@@ -22,6 +22,10 @@ namespace MyBird
 
         // 대기
         [SerializeField] private float readyForce = 1f;
+
+        // 게임 UI
+        public GameObject readyUI;
+        public GameObject gameoverUI;
         #endregion
 
         private void Start()
@@ -31,6 +35,7 @@ namespace MyBird
 
         private void Update()
         {
+
             // 키 입력
             InputBird();
 
@@ -57,13 +62,16 @@ namespace MyBird
         // 컨트롤 입력
         void InputBird()
         {
+            if (GameManager.IsDeath)
+                return;
+
             // 점프: 스페이스바 또는 마우스 왼클릭
             keyJump |= Input.GetKeyDown(KeyCode.Space);
             keyJump |= Input.GetMouseButtonDown(0);
 
             if(GameManager.IsStart == false && keyJump)
             {
-                GameManager.IsStart = true;
+                MoveStartBird();
             }
         }
 
@@ -97,11 +105,13 @@ namespace MyBird
         // 버드 이동
         void MoveBird()
         {
-            if(GameManager.IsStart == false)
+            if (GameManager.IsStart == false || GameManager.IsDeath == true)
                 return;
+
             transform.Translate(Vector3.right * Time.deltaTime * moveSpeed, Space.World);
         }
         
+        // 버드 대기
         void ReadyBird()
         {
             if (GameManager.IsStart)
@@ -114,6 +124,58 @@ namespace MyBird
             }
             
         }
+
+        // 버드 죽기
+        void DeathBird()
+        {
+            // 두번 죽음 처리 방지
+            if (GameManager.IsDeath)
+                return;
+            
+            //Debug.Log("죽음 처리");
+            GameManager.IsDeath = true;
+            gameoverUI.SetActive(true);
+        }
+
+        // 점수 획득
+        void GetPoint()
+        {
+            if (GameManager.IsDeath)
+                return;
+
+            //Debug.Log("점수 획득 처리");
+            GameManager.Score++;
+        }
+
+        // 이동 시작
+        void MoveStartBird()
+        {
+            GameManager.IsStart = true;
+            readyUI.SetActive(false);
+        }
+
+        // 버드 충돌 처리
+        private void OnTriggerEnter2D(Collider2D collider)
+        {
+            if(collider.tag == "Pipe")
+            {
+                DeathBird();
+            }
+            else if(collider.tag == "Point")
+            {
+                GetPoint();
+            }
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if(collision.gameObject.tag == "Ground")
+            {
+                DeathBird();
+            }
+        }
+
+
     }
 }
 
